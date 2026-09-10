@@ -1,5 +1,7 @@
 const Groq = require('groq-sdk');
 
+const GROQ_MODEL = process.env.GROQ_MODEL || 'penai/gpt-oss-20b';
+
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
@@ -44,7 +46,7 @@ IMPORTANT RULES:
 
   try {
     const message = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: GROQ_MODEL,
       max_tokens: 1024,
       temperature: 0.3,
       messages: [
