@@ -1,6 +1,6 @@
 const Groq = require('groq-sdk');
 
-const GROQ_MODEL = process.env.GROQ_MODEL || 'penai/gpt-oss-20b';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
