@@ -57,19 +57,32 @@ IMPORTANT RULES:
       ],
     });
 
-    console.log('Groq API response:', message);
-    console.log('Message content:', message.choices);
-    console.log('First choice:', message.choices[0]);
-    const responseText = message.choices[0].message.content;
-    console.log('Response text:', responseText);
+    const choice = message?.choices?.[0];
+    const messageContent = choice?.message?.content;
 
-    // Extract JSON from response (in case there's any extra text)
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    let responseText = messageContent;
+    if (Array.isArray(responseText)) {
+      responseText = responseText
+        .map((part) => typeof part === 'string' ? part : (part?.text || ''))
+        .join(' ');
+    }
+
+    if (typeof responseText !== 'string') {
       throw new Error('No JSON found in response');
     }
 
-    const result = JSON.parse(jsonMatch[0]);
+    const trimmedText = responseText.trim();
+    let result;
+
+    try {
+      result = JSON.parse(trimmedText);
+    } catch (error) {
+      const jsonMatch = trimmedText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('No JSON found in response');
+      }
+      result = JSON.parse(jsonMatch[0]);
+    }
 
     // Validate result structure
     if (!result.skillsFound || !Array.isArray(result.skillsFound)) {
